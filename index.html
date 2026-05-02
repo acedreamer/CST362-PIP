@@ -43,29 +43,28 @@
             --fast-easing: cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Dark Mode Mapping */
+        /* High-End Dark Mode Mapping */
         [data-theme="dark"] {
-            --bg: #121212 !important;
-            --bg-dark: #1E1E1E !important;
-            --bg-card: #181818 !important;
-            --bg-card-open: #242424 !important;
-            --text: #E0E0E0 !important;
-            --text-light: #BDBDBD !important;
-            --muted: #9E9E9E !important;
-            --border: #333333 !important;
-            --border-strong: #4F4F4F !important;
-            --or-bg: #1A1A1A !important;
-            --memorise-bg: #2C251D !important;
-            --memorise-border: #4D3F2D !important;
-            --practice-bg: #1A2622 !important;
-            --practice-border: #2C4A3E !important;
-            --prep-bg: #1F1F1F !important;
-            --prep-border: #3D3D3D !important;
-            --chip-bg: #2A2A2A !important;
+            --bg: #09090B; /* Deep Midnight Zinc */
+            --bg-dark: #121217;
+            --bg-card: #18181B;
+            --bg-card-open: #212124;
+            --text: #FAFAFA;
+            --text-light: #A1A1AA;
+            --muted: #71717A;
+            --border: #27272A;
+            --border-strong: #3F3F46;
+            --or-bg: #111113;
+            --memorise-bg: #221D18; /* Warm Tint for Memory */
+            --memorise-border: #3F3429;
+            --practice-bg: #12221D; /* Emerald Tint for Practice */
+            --practice-border: #1E3F35;
+            --prep-bg: #121217;
+            --prep-border: #27272A;
+            --chip-bg: #27272A;
             
-            /* Dynamically invert accent relative lightness but keep hue in JS, 
-               but CSS fallback maintains readability */
-            --accent-light: rgba(255, 255, 255, 0.1) !important;
+            --accent: #E4E4E7;
+            --accent-light: rgba(255, 255, 255, 0.05);
         }
 
         /* ==========================================================================
