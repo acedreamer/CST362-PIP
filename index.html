@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CST362 Python PYQ Analyzer</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500&family=Lato:wght@300;400;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==========================================================================
+           1. CSS VARIABLES & THEME ENGINE
+           ========================================================================== */
+        :root {
+            /* Fallback Light Theme (Overwritten by JS on load) */
+            --bg: #F6F1E7;
+            --bg-dark: #EDE8DB;
+            --bg-card: #FFFDF7;
+            --bg-card-open: #FAFDF9;
+            --accent: #6B8F6E;
+            --accent-light: #EEF4EE;
+            --accent-mid: #C5D5C6;
+            --accent-muted: #B5A882;
+            --text: #2C3139;
+            --text-light: #404854;
+            --muted: #7A7060;
+            --border: #E2DAC8;
+            --border-strong: #CFC6B2;
+            --or-bg: #FFFBF2;
+            --memorise-bg: #F7F2E8;
+            --memorise-border: #E0D5C0;
+            --practice-bg: #EEF4EE;
+            --practice-border: #C5D5C6;
+            --prep-bg: #F0F4F0;
+            --prep-border: #D4E0D5;
+            --chip-bg: #EDE8DB;
+            
+            /* Physics Parameters */
+            --spring-easing: cubic-bezier(0.175, 0.885, 0.32, 1.15);
+            --fast-easing: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Dark Mode Mapping */
+        [data-theme="dark"] {
+            --bg: #121212 !important;
+            --bg-dark: #1E1E1E !important;
+            --bg-card: #181818 !important;
+            --bg-card-open: #242424 !important;
+            --text: #E0E0E0 !important;
+            --text-light: #BDBDBD !important;
+            --muted: #9E9E9E !important;
+            --border: #333333 !important;
+            --border-strong: #4F4F4F !important;
+            --or-bg: #1A1A1A !important;
+            --memorise-bg: #2C251D !important;
+            --memorise-border: #4D3F2D !important;
+            --practice-bg: #1A2622 !important;
+            --practice-border: #2C4A3E !important;
+            --prep-bg: #1F1F1F !important;
+            --prep-border: #3D3D3D !important;
+            --chip-bg: #2A2A2A !important;
+            
+            /* Dynamically invert accent relative lightness but keep hue in JS, 
+               but CSS fallback maintains readability */
+            --accent-light: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        /* ==========================================================================
+           2. GLOBAL RESET & BASE STYLES
+           ========================================================================== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-strong) transparent;
+        }
+
+        /* Webkit Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-strong);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-muted);
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            transition: background-color 0.5s ease, color 0.3s ease;
+        }
+
+        h1, h2, h3 { font-family: 'Playfair Display', serif; }
+        
+        h1 {
+            font-weight: 700;
+            font-size: 32px;
+            letter-spacing: -0.5px;
+            line-height: 1.1;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        h2 {
+            font-weight: 600;
+            font-size: 20px;
+            color: var(--text);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* ==========================================================================
+           3. LAYOUT ARCHITECTURE
+           ========================================================================== */
+        .app-wrapper {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+            background-color: var(--bg-dark);
+            border-right: 1px solid var(--border);
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.5s ease, border-color 0.4s ease;
+            z-index: 10;
+        }
+
+        @media (min-width: 1200px) { .sidebar { width: 300px; } }
+
+        .eyebrow {
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            color: var(--muted);
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        /* Sidebar Navigation */
+        .nav-list {
+            list-style: none;
+            margin-top: 32px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav-item {
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--text-light);
+            border-left: 2px solid transparent;
+            transition: all 0.3s var(--fast-easing);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(0,0,0,0.03);
+            transform: translateX(4px);
+        }
+
+        [data-theme="dark"] .nav-item:hover { background-color: rgba(255,255,255,0.03); }
+
+        .nav-item.active {
+            border-left: 2px solid var(--accent);
+            background-color: var(--accent-light);
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .nav-progress {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        /* Controls Area (Sidebar Bottom) */
+        .sidebar-controls {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .theme-info {
+            font-family: 'DM Mono', monospace;
+            font-size: 9px;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-icon:hover {
+            color: var(--text);
+            background: var(--bg);
+            transform: rotate(45deg);
+        }
+
+        /* Dark Mode Toggle Switch */
+        .toggle-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background-color: var(--border-strong);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.4s var(--spring-easing);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        [data-theme="dark"] .toggle-switch { background-color: var(--accent); }
+        [data-theme="dark"] .toggle-switch::after { transform: translateX(20px); }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 40px 48px 120px;
+            scroll-behavior: smooth;
+        }
+
+        .content-container {
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
+        /* ==========================================================================
+           4. COMPONENTS
+           ========================================================================== */
+        
+        /* Module Sections */
+        .module-section {
+            margin-bottom: 64px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .module-header {
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* OR Strategy Box */
+        .or-strategy-box {
+            background-color: var(--or-bg);
+            border: 1px solid var(--accent-muted);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .or-strategy-box::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background-color: var(--accent-muted);
+        }
+
+        .or-icon { font-size: 20px; }
+        .or-content h4 {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+        .or-content p {
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--muted);
+        }
+
+        /* Repeat Warning */
+        .repeat-warning {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background-color: #FFF3CD;
+            color: #856404;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            font-weight: 500;
+            margin-top: 12px;
+            border: 1px solid #FFEEBA;
+            animation: pulseWarning 2s infinite;
+        }
+
+        [data-theme="dark"] .repeat-warning {
+            background-color: #332B00;
+            color: #FFD54F;
+            border-color: #4D4000;
+        }
+
+        @keyframes pulseWarning {
+            0% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(255, 193, 7, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }
+        }
+
+        /* Accordion Element */
+        .accordion {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-left: 3px solid transparent;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            transition: all 0.4s var(--spring-easing);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .accordion:hover {
+            border-color: var(--border-strong);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+
+        .accordion.open {
+            background-color: var(--bg-card-open);
+            border: 1px solid var(--accent-mid);
+            border-left: 3px solid var(--accent);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            margin-top: 16px;
+            margin-bottom: 24px;
+        }
+
+        /* Accordion Header */
+        .accordion-header {
+            padding: 16px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .accordion-title-group {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+        }
+
+        .topic-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+            transition: color 0.3s ease;
+        }
+
+        /* Badges */
+        .badge {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            letter-spacing: 1px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .badge-sure {
+            background-color: var(--accent-light);
+            border: 1px solid var(--accent-mid);
+            color: var(--accent);
+        }
+
+        .badge-high {
+            background-color: var(--or-bg);
+            border: 1px solid var(--accent-muted);
+            color: var(--muted);
+        }
+
+        .badge-mod {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-strong);
+            color: var(--text-light);
+        }
+
+        .chevron {
+            font-family: 'DM Mono', monospace;
+            font-size: 14px;
+            color: var(--muted);
+            transition: transform 0.4s var(--spring-easing);
+        }
+
+        .accordion.open .chevron { transform: rotate(180deg); }
+
+        /* Custom Checkbox (Physics enabled) */
+        .checkbox-wrapper {
+            position: relative;
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+            cursor: pointer;
+            /* Stop click from opening accordion */
+            z-index: 2; 
+        }
+
+        .checkbox-input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .checkbox-custom {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 24px;
+            width: 24px;
+            background-color: transparent;
+            border: 2px solid var(--border-strong);
+            border-radius: 50%;
+            transition: all 0.3s var(--spring-easing);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .checkbox-wrapper:hover .checkbox-custom {
+            border-color: var(--accent);
+            transform: scale(1.05);
+        }
+
+        .checkbox-input:checked ~ .checkbox-custom {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            transform: scale(1);
+            animation: bounceIn 0.5s var(--spring-easing);
+        }
+
+        .check-icon {
+            color: white;
+            width: 14px;
+            height: 14px;
+            stroke-dasharray: 24;
+            stroke-dashoffset: 24;
+            transition: stroke-dashoffset 0.4s ease 0.1s;
+        }
+
+        .checkbox-input:checked ~ .checkbox-custom .check-icon {
+            stroke-dashoffset: 0;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.8); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+
+        .accordion.checked .topic-name {
+            color: var(--muted);
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+
+        /* Accordion Content */
+        .accordion-content {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.4s var(--spring-easing), opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .accordion.open .accordion-content {
+            grid-template-rows: 1fr;
+            opacity: 1;
+        }
+
+        .content-inner {
+            overflow: hidden;
+            padding: 0 20px;
+        }
+
+        .accordion.open .content-inner { padding-bottom: 20px; }
+
+        /* Chips */
+        .chip-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            margin-top: 4px;
+            flex-wrap: wrap;
+        }
+
+        .chip {
+            background-color: var(--chip-bg);
+            color: var(--text-light);
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        /* Prep Block */
+        .prep-block {
+            background: linear-gradient(to right, var(--prep-bg), transparent);
+            border-left: 3px solid var(--accent);
+            padding: 12px 16px;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 16px;
+        }
+
+        .prep-block p {
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--text-light);
+        }
+
+        /* Action Cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .action-card {
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .action-card h5 {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            opacity: 0.8;
+        }
+
+        .card-memorise {
+            background-color: var(--memorise-bg);
+            border: 1px solid var(--memorise-border);
+            border-left: 3px solid var(--accent-muted);
+            color: var(--text);
+        }
+
+        .card-practice {
+            background-color: var(--practice-bg);
+            border: 1px solid var(--practice-border);
+            border-left: 3px solid var(--accent);
+            color: var(--text);
+        }
+
+        /* ==========================================================================
+           5. MOBILE NAVIGATION & RESPONSIVE
+           ========================================================================== */
+        .mobile-nav { display: none; }
+
+        @media (max-width: 768px) {
+            body { height: auto; overflow: visible; }
+            .sidebar { display: none; }
+            .main-content {
+                padding: 32px 20px 100px;
+                height: auto;
+                overflow-y: visible;
+            }
+            .card-grid { grid-template-columns: 1fr; }
+            .accordion-header { flex-wrap: wrap; }
+            
+            .mobile-nav {
+                display: flex;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 64px;
+                background: rgba(var(--bg), 0.95);
+                backdrop-filter: blur(10px);
+                border-top: 1px solid var(--border);
+                z-index: 100;
+                justify-content: space-around;
+                align-items: center;
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+
+            .mobile-nav-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 4px;
+                color: var(--muted);
+                text-decoration: none;
+                font-size: 12px;
+                font-weight: 600;
+            }
+
+            .mobile-nav-item.active { color: var(--accent); }
+            .mobile-nav-item.active::before {
+                content: '';
+                width: 4px;
+                height: 4px;
+                background-color: var(--accent);
+                border-radius: 50%;
+                margin-bottom: 2px;
+            }
+        }
+
+        /* ==========================================================================
+           6. ACCESSIBILITY & PRINT
+           ========================================================================== */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        @media print {
+            body { background: white; color: black; height: auto; overflow: visible; }
+            .sidebar, .mobile-nav, .toggle-wrapper { display: none; }
+            .main-content { padding: 0; margin: 0; max-width: 100%; overflow: visible; }
+            .accordion { border: 1px solid #ccc; page-break-inside: avoid; }
+            .accordion-content { grid-template-rows: 1fr; opacity: 1; }
+            .badge, .chip, .prep-block, .action-card { background: transparent !important; border: 1px solid #999; color: black !important; }
+            .repeat-warning { border: 2px solid black; animation: none; }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div>
+                <span class="eyebrow">PYQ Analyzer</span>
+                <h1>CST362</h1>
+                <p style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">Programming in Python</p>
+                <div style="font-family: 'DM Mono', monospace; font-size: 10px; color: var(--accent);">2019 Scheme Analysis</div>
+            </div>
+
+            <ul class="nav-list" id="desktopNav">
+                <!-- Injected via JS -->
+            </ul>
+
+            <div class="sidebar-controls">
+                <div class="toggle-wrapper">
+                    <span>Dark Mode</span>
+                    <div class="toggle-switch" id="darkModeToggle" role="switch" aria-checked="false" tabindex="0"></div>
+                </div>
+                
+                <div class="theme-info">
+                    <span id="themeNameLabel">Theme: Manuscript</span>
+                    <button class="btn-icon" id="themeRandomizer" aria-label="Randomize Theme">↻</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <div class="content-container" id="modulesContainer">
+                <!-- Content Injected via JS -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Nav -->
+    <nav class="mobile-nav" id="mobileNav">
+        <a href="#part-a" class="mobile-nav-item active">PART A</a>
+        <a href="#module-1" class="mobile-nav-item">M1</a>
+        <a href="#module-2" class="mobile-nav-item">M2</a>
+        <a href="#module-3" class="mobile-nav-item">M3</a>
+        <a href="#module-4" class="mobile-nav-item">M4</a>
+        <a href="#module-5" class="mobile-nav-item">M5</a>
+    </nav>
+
+    <script>
+        /* ==========================================================================
+           1. DATA STRUCTURE (CST362 Analysis)
+           ========================================================================== */
+        const EXAM_DATA = [
+            {
+                id: "part-a",
+                title: "Part A (Short Answers)",
+                strategy: "Focus strictly on definitions and syntax. Memorize Tkinter steps and OOP definitions as they appear in every paper.",
+                goldenOverlap: false,
+                topics: [
+                    {
+                        id: "pa1",
+                        name: "GUI / Tkinter Basics",
+                        prob: "SURE SHOT",
+                        badges: ["4/4 Papers", "Definition"],
+                        prep: "Frequently asks for steps to create a GUI application or advantages over terminal programs.",
+                        memorise: "1. Import tkinter. 2. Create main window (Tk()). 3. Add widgets (Button, Label). 4. Enter main event loop (mainloop()).",
+                        practice: "N/A"
+                    },
+                    {
+                        id: "pa2",
+                        name: "OOP Concepts",
+                        prob: "SURE SHOT",
+                        badges: ["4/4 Papers", "Syntax"],
+                        prep: "Questions on accessors/mutators, destructors, __init__ method, and method overriding.",
+                        memorise: "Accessors (getters) return state. Mutators (setters) modify state. __init__ is constructor, __del__ is destructor.",
+                        practice: "Write a small snippet showing class inheritance and overriding a method."
+                    },
+                    {
+                        id: "pa3",
+                        name: "Turtle Operations",
+                        prob: "HIGH PROB",
+                        badges: ["3/4 Papers", "Code"],
+                        prep: "Expect questions asking to draw a simple shape (star) or explain attributes.",
+                        memorise: "Methods: forward(), right(), left(), speed(), color().",
+                        practice: "Write a 5-line code to draw a star using a loop (angle 144)."
+                    },
+                    {
+                        id: "pa4",
+                        name: "Higher Order Functions & Iteration",
+                        prob: "HIGH PROB",
+                        badges: ["3/4 Papers", "Logic"],
+                        prep: "Differentiate definite/indefinite iteration, or explain map/filter/reduce with examples.",
+                        memorise: "Map applies function to all items; Filter removes items returning false; Reduce applies rolling computation.",
+                        practice: "Write map(lambda x: x*2, list) and filter(lambda x: x%2==0, list)."
+                    },
+                    {
+                        id: "pa5",
+                        name: "Flask & Web Dev",
+                        prob: "HIGH PROB",
+                        badges: ["2/4 Papers", "Theory"],
+                        prep: "Asked to narrate use of Flask or its basic components.",
+                        memorise: "Flask is a lightweight WSGI web framework. Components: Werkzeug (routing/debugging) and Jinja2 (template engine).",
+                        practice: "N/A"
+                    }
+                ]
+            },
+            {
+                id: "module-1",
+                title: "Module 1",
+                strategy: "Highly predictable module. Master printing basic number patterns and basic number logic (Armstrong, Prime, Factorial) for guaranteed 14 marks.",
+                goldenOverlap: false,
+                topics: [
+                    {
+                        id: "m1t1",
+                        name: "Basic Number Logic",
+                        prob: "SURE SHOT",
+                        badges: ["4/4 Papers", "Programming"],
+                        prep: "Includes Armstrong numbers, prime numbers, factorial, evaluating mathematical series.",
+                        memorise: "Armstrong: sum of cubes of digits == number. Prime: Check divisibility from 2 to sqrt(n).",
+                        practice: "Code Armstrong number checker and Prime number generator up to N."
+                    },
+                    {
+                        id: "m1t2",
+                        name: "Control Structures & Loops",
+                        prob: "SURE SHOT",
+                        badges: ["3/4 Papers", "Theory + Code"],
+                        prep: "Explain different loops (for, while) or selection structures with examples.",
+                        memorise: "Know syntax for if-elif-else, for loop with range(), and while loop. Mention break/continue.",
+                        practice: "Write code to find eldest of 3 without using max()."
+                    },
+                    {
+                        id: "m1t3",
+                        name: "Number/Star Patterns",
+                        prob: "HIGH PROB",
+                        badges: ["2/4 Papers", "Programming"],
+                        prep: "Print right-angled triangles using numbers (1, 12, 123) or descending sequences.",
+                        memorise: "Use nested for loops. Outer loop handles rows, inner loop handles columns.",
+                        practice: "Write a program to print descending pattern: \n5 4 3 2 1\n4 3 2 1..."
+                    }
+                ]
+            },
+            {
+                id: "module-2",
+                title: "Module 2",
+                strategy: "You must choose between List manipulation or Dictionary operations. Dictionary operations are slightly easier to code under pressure.",
+                goldenOverlap: false,
+                topics: [
+                    {
+                        id: "m2t1",
+                        name: "Dictionary Operations",
+                        prob: "SURE SHOT",
+                        badges: ["4/4 Papers", "Data Structures"],
+                        prep: "Adding pairs, accessing, traversing, calculating character frequency, matching names/birthdays.",
+                        memorise: "Add: dict[key] = value. Traverse: for k, v in dict.items().",
+                        practice: "Write a program counting character frequencies in a string using a dictionary."
+                    },
+                    {
+                        id: "m2t2",
+                        name: "List Operations",
+                        prob: "SURE SHOT",
+                        badges: ["4/4 Papers", "Data Structures"],
+                        prep: "Methods implementation, min/max finding, separating pos/neg numbers, sublist checking.",
+                        memorise: "Methods: append(), extend(), insert(), pop(), remove().",
+                        practice: "Write a function to separate positive and negative numbers from a list into two lists."
+                    },
+                    {
+                        id: "m2t3",
+                        name: "Caesar Cipher Encryption",
+                        prob: "HIGH PROB",
+                        badges: ["2/4 Papers", "String Manip"],
+                        isRepeat: true,
+                        prep: "Appeared identically in Apr '25 and May '23. Expect distance calculation for lowercase.",
+                        memorise: "Formula: chr((ord(char) - 97 + distance) % 26 + 97)",
+                        practice: "Write full encrypt and decrypt functions for Caesar cipher given a shift distance."
+                    }
+                ]
+            },
+            {
+                id: "module-3",
+                title: "Module 3",
+                strategy: "GOLDEN OVERLAP: Image Processing appears in almost every paper, sometimes on BOTH sides of the OR choice. Prioritize Image Processing combined with Tkinter GUI.",
+                goldenOverlap: "Image Processing",
+                topics: [
+                    {
+                        id: "m3t1",
+                        name: "Image Processing Functions",
+                        prob: "SURE SHOT",
+                        badges: ["4/4 Papers", "Libraries"],
+                        prep: "Blurring, edge detection, grayscale conversion, black/white, displaying images in GUI.",
+                        memorise: "Pillow (PIL) library: Image.open(), img.filter(ImageFilter.BLUR), img.convert('L') for grayscale.",
+                        practice: "Write code to open an image, apply edge detection filter, and save it."
+                    },
+                    {
+                        id: "m3t2",
+                        name: "GUI Application Design",
+                        prob: "SURE SHOT",
+                        badges: ["4/4 Papers", "Tkinter"],
+                        prep: "Calculate area on button press, Rupee to Euro converter, Age from birthdate.",
+                        memorise: "Entry widget for input, Label for output, Button(command=calc_function). grid() for layout.",
+                        practice: "Build a mini calculator grid (Entry fields, convert button, result label)."
+                    },
+                    {
+                        id: "m3t3",
+                        name: "Turtle Graphic Shapes",
+                        prob: "SURE SHOT",
+                        badges: ["4/4 Papers", "Turtle"],
+                        prep: "Drawing Hexagon, Pentagon, Square. Usually asked to fill color.",
+                        memorise: "Angle formula: 360/n (e.g., Hexagon = 60 degrees). begin_fill(), end_fill().",
+                        practice: "Draw a pentagon filled with blue color without using loops (manual forward/right lines)."
+                    }
+                ]
+            },
+            {
+                id: "module-4",
+                title: "Module 4",
+                strategy: "OOP implementation is mandatory. Master inheritance types. Exception handling is the easiest 7 marks in the paper.",
+                goldenOverlap: false,
+                topics: [
+                    {
+                        id: "m4t1",
+                        name: "Inheritance & Polymorphism",
+                        prob: "SURE SHOT",
+                        badges: ["4/4 Papers", "OOP"],
+                        prep: "Implement single/multilevel inheritance. Demonstrate method overriding.",
+                        memorise: "Syntax: class Child(Parent):. Polymorphism achieved via overriding identical method names.",
+                        practice: "Create class Shape -> subclasses Rectangle/Triangle that override area() method."
+                    },
+                    {
+                        id: "m4t2",
+                        name: "Exception Handling",
+                        prob: "SURE SHOT",
+                        badges: ["4/4 Papers", "Theory + Code"],
+                        prep: "What are exceptions? How to catch them? Try/except/finally blocks.",
+                        memorise: "try: code that may crash. except ExceptionType: handling logic. finally: executes regardless.",
+                        practice: "Write a divide function handling ZeroDivisionError and ValueError."
+                    },
+                    {
+                        id: "m4t3",
+                        name: "Abstract Classes",
+                        prob: "HIGH PROB",
+                        badges: ["3/4 Papers", "OOP"],
+                        prep: "Definition and example implementation.",
+                        memorise: "Import ABC, abstractmethod from abc module. Cannot be instantiated. Forces subclasses to implement methods.",
+                        practice: "Define an Abstract class Shape with abstract method area()."
+                    }
+                ]
+            },
+            {
+                id: "module-5",
+                title: "Module 5",
+                strategy: "This is a library-heavy module. Memorize basic Pandas read/filter syntax and Numpy array operations. Matplotlib plotting is heavily repeated.",
+                goldenOverlap: false,
+                topics: [
+                    {
+                        id: "m5t1",
+                        name: "Matplotlib Plotting",
+                        prob: "SURE SHOT",
+                        badges: ["4/4 Papers", "Data Viz"],
+                        isRepeat: true,
+                        prep: "EXACT REPEAT: Plotting y=sin(x) and y=cos(x) on same plot with legend/labels appeared identically in Apr '25 and May '24.",
+                        memorise: "plt.plot(x, y1, '-'), plt.plot(x, y2, '--'), plt.legend(), plt.show().",
+                        practice: "Write code to generate x using np.linspace, compute sin/cos, plot lines, add title and display."
+                    },
+                    {
+                        id: "m5t2",
+                        name: "Pandas Data Manipulation",
+                        prob: "SURE SHOT",
+                        badges: ["4/4 Papers", "Pandas"],
+                        prep: "Read CSV, print top N rows, sort by column, filter by condition (e.g., male employees).",
+                        memorise: "df = pd.read_csv(). df.head(5). df.sort_values(by='col'). df[df['gender']=='M'].",
+                        practice: "Given 'students.csv', write code to print names alphabetically and find max grade."
+                    },
+                    {
+                        id: "m5t3",
+                        name: "Numpy Array Math",
+                        prob: "SURE SHOT",
+                        badges: ["4/4 Papers", "Numpy"],
+                        prep: "Matrix operations, dot product, array slicing (arr[:2,1:]), element-wise addition.",
+                        memorise: "np.random.randint(low, high, size). np.dot(A, B). A + B (element-wise). np.mean(A).",
+                        practice: "Create a 3x3 random matrix. Multiply it by a scalar. Calculate its standard deviation."
+                    },
+                    {
+                        id: "m5t4",
+                        name: "CSV Writing",
+                        prob: "SURE SHOT",
+                        badges: ["4/4 Papers", "File I/O"],
+                        prep: "Write given tabular data to a CSV file. Usually given as a table in question.",
+                        memorise: "import csv. with open('file.csv', 'w') as f: writer=csv.writer(f); writer.writerows(data)",
+                        practice: "Store a list of lists representing a mini-table and write it to 'output.csv'."
+                    }
+                ]
+            }
+        ];
+
+        /* ==========================================================================
+           2. THEME ENGINE
+           ========================================================================== */
+        const SCHEMES = [
+            { name: "Manuscript", "--bg": "#F6F1E7", "--bg-dark": "#EDE8DB", "--bg-card": "#FFFDF7", "--bg-card-open": "#FAFDF9", "--accent": "#6B8F6E", "--accent-light": "#EEF4EE", "--accent-mid": "#C5D5C6", "--accent-muted": "#B5A882", "--text": "#2C3139", "--text-light": "#404854", "--muted": "#7A7060", "--border": "#E2DAC8", "--border-strong": "#CFC6B2", "--or-bg": "#FFFBF2", "--memorise-bg": "#F7F2E8", "--memorise-border": "#E0D5C0", "--practice-bg": "#EEF4EE", "--practice-border": "#C5D5C6", "--prep-bg": "#F0F4F0", "--prep-border": "#D4E0D5", "--chip-bg": "#EDE8DB" },
+            { name: "Blueprint", "--bg": "#EEF1F7", "--bg-dark": "#E3E8F2", "--bg-card": "#F8F9FC", "--bg-card-open": "#F4F7FC", "--accent": "#4A6FA5", "--accent-light": "#E8EEF7", "--accent-mid": "#B8CCE4", "--accent-muted": "#8BA3C7", "--text": "#1E2A3A", "--text-light": "#2E3D52", "--muted": "#607090", "--border": "#D0D9E8", "--border-strong": "#B8C8DC", "--or-bg": "#F5F8FF", "--memorise-bg": "#EAF0F8", "--memorise-border": "#C8D8EC", "--practice-bg": "#E8EEF7", "--practice-border": "#B8CCE4", "--prep-bg": "#EDF2F9", "--prep-border": "#C0D0E4", "--chip-bg": "#E0E8F4" },
+            { name: "Terracotta", "--bg": "#F5EDE8", "--bg-dark": "#EDE0D8", "--bg-card": "#FDF9F7", "--bg-card-open": "#FAF5F2", "--accent": "#A0522D", "--accent-light": "#F5EBE4", "--accent-mid": "#D4A899", "--accent-muted": "#C4957A", "--text": "#2C1810", "--text-light": "#3D2418", "--muted": "#7A5848", "--border": "#E8D0C4", "--border-strong": "#D4B8A8", "--or-bg": "#FDF8F5", "--memorise-bg": "#F5EBE4", "--memorise-border": "#DCC0B0", "--practice-bg": "#F8F0EC", "--practice-border": "#D4A898", "--prep-bg": "#F2EAE5", "--prep-border": "#D0B4A4", "--chip-bg": "#EDE0D8" },
+            { name: "Dusk", "--bg": "#F0EDF5", "--bg-dark": "#E6E1EF", "--bg-card": "#FAF9FC", "--bg-card-open": "#F6F3FB", "--accent": "#7B5EA7", "--accent-light": "#EEE8F5", "--accent-mid": "#C8B8E0", "--accent-muted": "#A890C8", "--text": "#1E1830", "--text-light": "#2E2444", "--muted": "#6E6080", "--border": "#DDD4EC", "--border-strong": "#C8BCDC", "--or-bg": "#F8F5FC", "--memorise-bg": "#EEE8F5", "--memorise-border": "#D0C0E8", "--practice-bg": "#EAE4F4", "--practice-border": "#C4B4DC", "--prep-bg": "#EDE8F5", "--prep-border": "#C8B8E0", "--chip-bg": "#E4DCF0" },
+            { name: "Charcoal & Gold", "--bg": "#F2EFE8", "--bg-dark": "#E8E3D8", "--bg-card": "#FDFCF8", "--bg-card-open": "#F8F5EE", "--accent": "#8B6914", "--accent-light": "#F5EDD4", "--accent-mid": "#D4B870", "--accent-muted": "#C4A050", "--text": "#1A1810", "--text-light": "#2A2618", "--muted": "#6A6050", "--border": "#E0D8C4", "--border-strong": "#CCC0A0", "--or-bg": "#FDFAF2", "--memorise-bg": "#F5EDD4", "--memorise-border": "#D8C888", "--practice-bg": "#F0EAD4", "--practice-border": "#CCB870", "--prep-bg": "#F2ECD8", "--prep-border": "#D0BC80", "--chip-bg": "#E8DEC4" },
+            { name: "Forest Night", "--bg": "#EAF0EC", "--bg-dark": "#DDE8E0", "--bg-card": "#F7FBF8", "--bg-card-open": "#F2F8F4", "--accent": "#2D6A4F", "--accent-light": "#E8F4EC", "--accent-mid": "#A8D4B8", "--accent-muted": "#74B090", "--text": "#0D1F18", "--text-light": "#1A2E24", "--muted": "#507060", "--border": "#C8DDD0", "--border-strong": "#A8C8B8", "--or-bg": "#F4FBF6", "--memorise-bg": "#E4F0E8", "--memorise-border": "#A8D0B8", "--practice-bg": "#DDF0E4", "--practice-border": "#90C8A8", "--prep-bg": "#E8F4EC", "--prep-border": "#A0CEB4", "--chip-bg": "#D8EDE0" }
+        ];
+
+        function applyRandomTheme() {
+            const scheme = SCHEMES[Math.floor(Math.random() * SCHEMES.length)];
+            const root = document.documentElement;
+            
+            Object.keys(scheme).forEach(key => {
+                if(key !== 'name') root.style.setProperty(key, scheme[key]);
+            });
+            
+            document.getElementById('themeNameLabel').innerText = `Theme: ${scheme.name}`;
+        }
+
+        // Initialize Theme
+        applyRandomTheme();
+        document.getElementById('themeRandomizer').addEventListener('click', applyRandomTheme);
+
+        /* Dark Mode Toggle */
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        darkModeToggle.addEventListener('click', () => {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+                document.documentElement.removeAttribute('data-theme');
+                darkModeToggle.setAttribute('aria-checked', 'false');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                darkModeToggle.setAttribute('aria-checked', 'true');
+            }
+        });
+
+        /* ==========================================================================
+           3. RENDER CONTENT
+           ========================================================================== */
+        
+        // Setup State
+        let checkedTopics = JSON.parse(localStorage.getItem('cst362_progress')) || {};
+
+        function saveProgress() {
+            localStorage.setItem('cst362_progress', JSON.stringify(checkedTopics));
+            updateNavProgress();
+        }
+
+        function updateNavProgress() {
+            EXAM_DATA.forEach(mod => {
+                const total = mod.topics.length;
+                const completed = mod.topics.filter(t => checkedTopics[t.id]).length;
+                const navId = `nav-prog-${mod.id}`;
+                const el = document.getElementById(navId);
+                if(el) el.innerText = `${completed}/${total}`;
+            });
+        }
+
+        const navContainer = document.getElementById('desktopNav');
+        const mainContainer = document.getElementById('modulesContainer');
+
+        EXAM_DATA.forEach((module, mIdx) => {
+            // Render Nav
+            const navHTML = `
+                <li class="nav-item ${mIdx === 0 ? 'active' : ''}" onclick="scrollToModule('${module.id}', this)">
+                    ${module.title}
+                    <span class="nav-progress" id="nav-prog-${module.id}">0/${module.topics.length}</span>
+                </li>
+            `;
+            navContainer.insertAdjacentHTML('beforeend', navHTML);
+
+            // Render Strategy & Module Header
+            let moduleHTML = `
+                <div class="module-section" id="${module.id}" style="animation: fadeIn 0.6s var(--fast-easing) forwards; animation-delay: ${mIdx * 100}ms;">
+                    <div class="module-header">
+                        <h2>${module.title}</h2>
+                    </div>
+            `;
+
+            if(module.strategy) {
+                moduleHTML += `
+                    <div class="or-strategy-box">
+                        <div class="or-icon">🎯</div>
+                        <div class="or-content">
+                            <h4>Exam Strategy</h4>
+                            <p>${module.strategy}</p>
+                            ${module.goldenOverlap ? `<p style="color: var(--accent); font-weight: 700; margin-top: 8px;">★ GOLDEN OVERLAP: ${module.goldenOverlap}</p>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Render Topics (Accordions)
+            module.topics.forEach(topic => {
+                const isChecked = checkedTopics[topic.id] ? 'checked' : '';
+                const isOpen = ''; // start closed
+
+                let badgeHTML = topic.badges.map(b => {
+                    let c = 'badge-mod';
+                    if(b.includes('SURE') || b.includes('4/4')) c = 'badge-sure';
+                    else if(b.includes('HIGH') || b.includes('3/4') || b.includes('2/4')) c = 'badge-high';
+                    return `<span class="badge ${c}">${b}</span>`;
+                }).join('');
+
+                const repeatWarning = topic.isRepeat ? `<div class="repeat-warning">⚠️ EXACT REPEAT LIKELY</div>` : '';
+
+                moduleHTML += `
+                    <div class="accordion ${isChecked} ${isOpen}" id="acc-${topic.id}">
+                        <div class="accordion-header" onclick="toggleAccordion('acc-${topic.id}', event)">
+                            <div class="accordion-title-group">
+                                <div class="checkbox-wrapper" onclick="toggleCheck('${topic.id}', event)">
+                                    <input type="checkbox" class="checkbox-input" ${isChecked ? 'checked' : ''}>
+                                    <div class="checkbox-custom">
+                                        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="topic-name">${topic.name}</div>
+                                    ${repeatWarning}
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                ${badgeHTML}
+                                <span class="chevron">↓</span>
+                            </div>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="content-inner">
+                                <div class="prep-block">
+                                    <p><strong>Examiner's Angle:</strong> ${topic.prep}</p>
+                                </div>
+                                <div class="card-grid">
+                                    <div class="action-card card-memorise">
+                                        <h5>Memorise</h5>
+                                        <p>${topic.memorise}</p>
+                                    </div>
+                                    <div class="action-card card-practice">
+                                        <h5>Practice</h5>
+                                        <p>${topic.practice}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            moduleHTML += `</div>`;
+            mainContainer.insertAdjacentHTML('beforeend', moduleHTML);
+        });
+
+        updateNavProgress();
+
+        /* ==========================================================================
+           4. INTERACTIONS & PHYSICS LOGIC
+           ========================================================================== */
+
+        function toggleAccordion(id, e) {
+            // Ignore if clicked on checkbox
+            if(e.target.closest('.checkbox-wrapper')) return;
+            
+            const acc = document.getElementById(id);
+            const content = acc.querySelector('.accordion-content');
+            
+            if (acc.classList.contains('open')) {
+                acc.classList.remove('open');
+            } else {
+                // Optional: Auto-close others
+                // document.querySelectorAll('.accordion.open').forEach(el => el.classList.remove('open'));
+                acc.classList.add('open');
+            }
+        }
+
+        function toggleCheck(id, e) {
+            // Let the input checked state handle visually, we update DOM class and localStorage
+            const acc = document.getElementById(`acc-${id}`);
+            const input = acc.querySelector('.checkbox-input');
+            
+            // We read the *new* state because the click on wrapper checks the input
+            setTimeout(() => {
+                const isNowChecked = input.checked;
+                checkedTopics[id] = isNowChecked;
+                if(isNowChecked) {
+                    acc.classList.add('checked');
+                } else {
+                    acc.classList.remove('checked');
+                }
+                saveProgress();
+            }, 50);
+        }
+
+        function scrollToModule(id, navEl) {
+            const el = document.getElementById(id);
+            if(el) {
+                document.getElementById('mainContent').scrollTo({
+                    top: el.offsetTop - 40,
+                    behavior: 'smooth'
+                });
+            }
+            // Update Active Nav Visual
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            if(navEl) navEl.classList.add('active');
+        }
+
+        // Mobile Nav Interception
+        const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+        mobileNavItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                mobileNavItems.forEach(n => n.classList.remove('active'));
+                item.classList.add('active');
+                
+                const targetId = item.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if(targetEl) {
+                    window.scrollTo({
+                        top: targetEl.offsetTop - 20,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer for Desktop Nav sync on scroll
+        const mainScroll = document.getElementById('mainContent');
+        const sections = document.querySelectorAll('.module-section');
+        
+        mainScroll.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(sec => {
+                const top = sec.offsetTop - 100;
+                if(mainScroll.scrollTop >= top) {
+                    current = sec.getAttribute('id');
+                }
+            });
+
+            document.querySelectorAll('.nav-item').forEach(li => {
+                li.classList.remove('active');
+                if(li.getAttribute('onclick').includes(current)) {
+                    li.classList.add('active');
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>
