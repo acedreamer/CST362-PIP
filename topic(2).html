@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KTU CGIP Exam Blueprint (CST304)</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500&family=Lato:wght@300;400;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* Fallback scheme - overridden by JS */
+            --bg: #F6F1E7; --bg-dark: #EDE8DB; --bg-card: #FFFDF7; --bg-card-open: #FAFDF9;
+            --accent: #6B8F6E; --accent-light: #EEF4EE; --accent-mid: #C5D5C6; --accent-muted: #B5A882;
+            --text: #2C3139; --text-light: #404854; --muted: #7A7060;
+            --border: #E2DAC8; --border-strong: #CFC6B2;
+            --or-bg: #FFFBF2; --memorise-bg: #F7F2E8; --memorise-border: #E0D5C0;
+            --practice-bg: #EEF4EE; --practice-border: #C5D5C6;
+            --prep-bg: #F0F4F0; --prep-border: #D4E0D5; --chip-bg: #EDE8DB;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            transition: background 0.5s ease, color 0.3s ease;
+        }
+
+        /* Desktop Layout */
+        .app-container {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+            background: var(--bg-dark);
+            border-right: 1px solid var(--border);
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.5s ease, border-color 0.4s ease;
+        }
+
+        @media (min-width: 1200px) {
+            .sidebar { width: 320px; }
+        }
+
+        .eyebrow {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 12px;
+        }
+
+        .sidebar h1 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 28px;
+            line-height: 1.1;
+            letter-spacing: -0.5px;
+            color: var(--text);
+            margin-bottom: 24px;
+        }
+
+        .nav-list {
+            list-style: none;
+            margin-top: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+        }
+
+        .nav-item {
+            padding: 12px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Lato', sans-serif;
+            font-size: 14px;
+            color: var(--text-light);
+            border-left: 2px solid transparent;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-item.active {
+            border-left-color: var(--accent);
+            background: var(--accent-light);
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .nav-progress {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        .theme-footer {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border-strong);
+            color: var(--text);
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--accent-light);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 40px 48px 120px;
+            scroll-behavior: smooth;
+        }
+
+        .content-wrapper {
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
+        .module-section {
+            margin-bottom: 64px;
+            scroll-margin-top: 40px;
+        }
+
+        .module-header {
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 16px;
+        }
+
+        .module-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            font-size: 24px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .module-badge {
+            background: var(--chip-bg);
+            color: var(--text-light);
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            letter-spacing: 1px;
+            vertical-align: middle;
+        }
+
+        /* Strategy Box */
+        .strategy-box {
+            background: var(--or-bg);
+            border: 1px dashed var(--accent-muted);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .strategy-box h4 {
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .strategy-box p {
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--muted);
+        }
+
+        /* Accordions */
+        .accordion {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-left: 3px solid transparent;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(44, 49, 57, 0.04);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            animation: fadeIn 0.4s ease forwards;
+            opacity: 0;
+        }
+
+        .accordion:hover {
+            box-shadow: 0 2px 8px rgba(44, 49, 57, 0.08);
+            border-color: var(--border-strong);
+            transform: translateY(-1px);
+        }
+
+        .accordion.open {
+            background: var(--bg-card-open);
+            border: 1px solid var(--accent-mid);
+            border-left: 3px solid var(--accent);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+        }
+
+        .accordion-header {
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            gap: 16px;
+        }
+
+        .accordion-title-group {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+        }
+
+        /* Checkbox Styling */
+        .custom-checkbox {
+            position: relative;
+            width: 22px;
+            height: 22px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            border: 2px solid var(--border-strong);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .custom-checkbox input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .custom-checkbox svg {
+            width: 12px;
+            height: 12px;
+            fill: none;
+            stroke: white;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 16;
+            stroke-dashoffset: 16;
+            transition: stroke-dashoffset 0.3s ease;
+        }
+
+        .custom-checkbox.checked {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .custom-checkbox.checked svg {
+            stroke-dashoffset: 0;
+        }
+
+        .topic-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text);
+            transition: color 0.2s ease;
+            line-height: 1.4;
+        }
+
+        .accordion.checked .topic-name {
+            color: var(--muted);
+            text-decoration: line-through;
+            opacity: 0.8;
+        }
+
+        .tier-badge {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+            letter-spacing: 0.5px;
+        }
+
+        .tier-sure-shot { background: var(--accent-light); border: 1px solid var(--accent-mid); color: var(--accent); }
+        .tier-high-prob { background: var(--or-bg); border: 1px solid var(--accent-muted); color: var(--text-light); }
+        .tier-moderate { background: var(--bg-dark); border: 1px solid var(--border-strong); color: var(--muted); }
+
+        .chevron {
+            font-family: 'DM Mono', monospace;
+            font-size: 14px;
+            color: var(--muted);
+            transition: transform 0.3s ease;
+        }
+
+        .accordion.open .chevron {
+            transform: rotate(180deg);
+            color: var(--accent);
+        }
+
+        /* Accordion Body */
+        .accordion-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0, 1, 0, 1);
+        }
+
+        .accordion.open .accordion-body {
+            max-height: 1000px;
+            transition: max-height 0.6s ease-in-out;
+        }
+
+        .accordion-content-inner {
+            padding: 0 20px 20px 58px; /* Aligned with title */
+        }
+
+        .metadata-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .chip {
+            background: var(--chip-bg);
+            color: var(--text-light);
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .prep-block {
+            background: linear-gradient(to right, var(--prep-bg), transparent);
+            border-left: 2px solid var(--accent);
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .prep-block p {
+            font-size: 13px;
+            line-height: 1.7;
+            color: var(--muted);
+        }
+
+        .prep-block strong {
+            color: var(--text-light);
+        }
+
+        .action-cards {
+            display: flex;
+            gap: 16px;
+        }
+
+        .action-card {
+            flex: 1;
+            padding: 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .action-card h5 {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .card-memorise {
+            background: var(--memorise-bg);
+            border: 1px solid var(--memorise-border);
+            border-left: 3px solid var(--accent-muted);
+            color: var(--text-light);
+        }
+        
+        .card-memorise h5 { color: var(--accent-muted); }
+
+        .card-practice {
+            background: var(--practice-bg);
+            border: 1px solid var(--practice-border);
+            border-left: 3px solid var(--accent);
+            color: var(--text);
+        }
+
+        .card-practice h5 { color: var(--accent); }
+
+        /* Animation Keyframes */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Mobile Layout */
+        .mobile-nav {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                height: auto;
+                overflow: visible;
+            }
+
+            .app-container {
+                display: block;
+                height: auto;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                height: auto;
+                overflow: visible;
+                padding: 32px 16px 100px;
+            }
+
+            .action-cards {
+                flex-direction: column;
+            }
+
+            .accordion-content-inner {
+                padding: 0 16px 16px 16px;
+            }
+
+            /* Mobile Bottom Nav */
+            .mobile-nav {
+                display: flex;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 64px;
+                background: var(--bg-card);
+                border-top: 1px solid var(--border);
+                box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+                z-index: 100;
+                justify-content: space-around;
+                align-items: center;
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+
+            .mobile-nav-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 4px;
+                text-decoration: none;
+                color: var(--muted);
+                font-family: 'DM Mono', monospace;
+                font-size: 10px;
+                position: relative;
+            }
+
+            .mobile-nav-item.active {
+                color: var(--accent);
+                font-weight: 500;
+            }
+
+            .mobile-nav-item.active::after {
+                content: '';
+                position: absolute;
+                top: -12px;
+                width: 4px;
+                height: 4px;
+                background: var(--accent);
+                border-radius: 50%;
+            }
+        }
+
+        /* Print & Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        @media print {
+            .sidebar, .mobile-nav, .theme-footer { display: none !important; }
+            body { background: white !important; color: black !important; }
+            .main-content { padding: 0 !important; max-width: 100% !important; overflow: visible !important; }
+            .accordion { border: 1px solid black !important; box-shadow: none !important; margin-bottom: 16px !important; }
+            .accordion-body { max-height: none !important; }
+            .chevron { display: none !important; }
+            .tier-badge, .chip { border: 1px solid black !important; color: black !important; background: transparent !important; }
+            .strategy-box { border: 1px solid black !important; background: transparent !important; }
+            .prep-block, .action-card { border: 1px solid #ccc !important; background: transparent !important; }
+            .accordion.checked .topic-name { text-decoration: none; color: black; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <!-- Desktop Sidebar -->
+    <aside class="sidebar">
+        <div class="eyebrow">KTU PYQ Analyzer</div>
+        <h1>CST304 CGIP</h1>
+        
+        <nav class="nav-list" id="desktopNav">
+            <a href="#mod1" class="nav-item active">
+                <span>Module 1</span>
+                <span class="nav-progress" id="prog-mod1">0/4</span>
+            </a>
+            <a href="#mod2" class="nav-item">
+                <span>Module 2</span>
+                <span class="nav-progress" id="prog-mod2">0/5</span>
+            </a>
+            <a href="#mod3" class="nav-item">
+                <span>Module 3</span>
+                <span class="nav-progress" id="prog-mod3">0/5</span>
+            </a>
+            <a href="#mod4" class="nav-item">
+                <span>Module 4</span>
+                <span class="nav-progress" id="prog-mod4">0/5</span>
+            </a>
+            <a href="#mod5" class="nav-item">
+                <span>Module 5</span>
+                <span class="nav-progress" id="prog-mod5">0/5</span>
+            </a>
+        </nav>
+
+        <div class="theme-footer">
+            <span id="themeName">Theme: Auto</span>
+            <button class="theme-toggle" onclick="randomizeTheme()" aria-label="Change Theme">↻ Theme</button>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content" id="mainScroll">
+        <div class="content-wrapper" id="content-container">
+            <!-- Content will be injected here via HTML -->
+            
+            <!-- MODULE 1 -->
+            <section id="mod1" class="module-section">
+                <div class="module-header">
+                    <h2>Module 1 <span class="module-badge">Display & Drawing</span></h2>
+                </div>
+                
+                <div class="strategy-box">
+                    <h4>❖ Strategy for Mod 1</h4>
+                    <p><strong>Odd Slot (Q11):</strong> Heavily favors Bresenham's Line Drawing (Derivation & Problem) + Display Architectures (Raster/Refresh CRT).<br>
+                    <strong>Even Slot (Q12):</strong> Mixes DDA Line Algorithm, Midpoint/Bresenham's Circle, and Hardware comparisons (Raster vs Random, Shadow Mask).<br>
+                    <strong>Recommendation:</strong> Master Bresenham's line derivation and problem steps. It's a 100% Sure Shot. Focus on the Odd path for safety.</p>
+                </div>
+
+                <div class="accordion-list">
+                    <!-- Topic -->
+                    <div class="accordion" data-id="m1-t1" style="animation-delay: 0ms;">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <div class="accordion-title-group">
+                                <div class="custom-checkbox" onclick="toggleCheck(event, this)">
+                                    <input type="checkbox">
+                                    <svg viewBox="0 0 16 16"><path d="M3 8.5 l3 3 l7 -7"/></svg>
+                                </div>
+                                <span class="topic-name">Bresenham's Line Drawing Algorithm</span>
+                                <span class="tier-badge tier-sure-shot">SURE SHOT (4/4)</span>
+                            </div>
+                            <span class="chevron">↓</span>
+                        </div>
+                        <div class="accordion-body">
+                            <div class="accordion-content-inner">
+                                <div class="metadata-row">
+                                    <span class="chip">Part B (14m)</span>
+                                    <span class="chip">Odd Slot (Q11)</span>
+                                </div>
+                                <div class="prep-block">
+                                    <p><strong>Prep Note:</strong> You MUST know both the derivation of initial decision parameters and step-by-step problem-solving. Make sure to draw the table showing k, p_k, (x_k+1, y_k+1). </p>
+                                </div>
+                                <div class="action-cards">
+                                    <div class="action-card card-memorise">
+                                        <h5>Memorise</h5>
+                                        Decision parameter p0 = 2Δy - Δx. If pk < 0: pk+1 = pk + 2Δy. If pk ≥ 0: pk+1 = pk + 2Δy - 2Δx.
+                                    </div>
+                                    <div class="action-card card-practice">
+                                        <h5>⚠️ Repeating Problems</h5>
+                                        Practice exact points from papers: (2,3) to (10,8) [Apr '25], (9,18) to (14,22) [Jan '24], (1,7) to (5,9) [Jun '22].
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Topic -->
+                    <div class="accordion" data-id="m1-t2" style="animation-delay: 60ms;">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <div class="accordion-title-group">
+                                <div class="custom-checkbox" onclick="toggleCheck(event, this)">
+                                    <input type="checkbox">
+                                    <svg viewBox="0 0 16 16"><path d="M3 8.5 l3 3 l7 -7"/></svg>
+                                </div>
+                                <span class="topic-name">DDA Line Drawing Algorithm</span>
+                                <span class="tier-badge tier-high-prob">HIGH PROB (3/4)</span>
+                            </div>
+                            <span class="chevron">↓</span>
+                        </div>
+                        <div class="accordion-body">
+                            <div class="accordion-content-inner">
+                                <div class="metadata-row">
+                                    <span class="chip">Part B (14m)</span>
+                                    <span class="chip">Even Slot (Q12)</span>
+                                    <span class="chip">Part A</span>
+                                </div>
+                                <div class="prep-block">
+                                    <p><strong>Prep Note:</strong> Usually asked as a direct problem to calculate intermediate pixels. In Jan '24, Part A asked to compare DDA with Bresenham's.</p>
+                                </div>
+                                <div class="action-cards">
+                                    <div class="action-card card-practice">
+                                        <h5>Practice</h5>
+                                        Plot line using DDA for coordinates (2,4) to (7,8) [Apr '25], (-2,-4) to (4,3) [May '23], (2,8) to (12,18) [Jun '22]. Round off values correctly!
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Topic -->
+                    <div class="accordion" data-id="m1-t3" style="animation-delay: 120ms;">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <div class="accordion-title-group">
+                                <div class="custom-checkbox" onclick="toggleCheck(event, this)">
+                                    <input type="checkbox">
+                                    <svg viewBox="0 0 16 16"><path d="M3 8.5 l3 3 l7 -7"/></svg>
+                                </div>
+                                <span class="topic-name">Display Hardware (Raster, Random, CRT)</span>
+                                <span class="tier-badge tier-high-prob">HIGH PROB (3/4)</span>
+                            </div>
+                            <span class="chevron">↓</span>
+                        </div>
+                        <div class="accordion-body">
+                            <div class="accordion-content-inner">
+                                <div class="metadata-row">
+                                    <span class="chip">Part B Theory</span>
+                                    <span class="chip">Odd/Even Intersect</span>
+                                </div>
+                                <div class="prep-block">
+                                    <p><strong>Prep Note:</strong> Questions focus on explaining architectures with diagrams (Raster scan system architecture) or differentiating Raster vs Random scan. Color generation techniques (Beam Penetration, Shadow Mask) appear frequently.</p>
+                                </div>
+                                <div class="action-cards">
+                                    <div class="action-card card-memorise">
+                                        <h5>Memorise</h5>
+                                        Differences table: Raster vs Random scan. Architecture block diagrams. Beam Penetration (voltage levels -> colors) vs Shadow Mask (RGB electron guns).
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Topic -->
+                    <div class="accordion" data-id="m1-t4" style="animation-delay: 180ms;">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <div class="accordion-title-group">
+                                <div class="custom-checkbox" onclick="toggleCheck(event, this)">
+                                    <input type="checkbox">
+                                    <svg viewBox="0 0 16 16"><path d="M3 8.5 l3 3 l7 -7"/></svg>
+                                </div>
+                                <span class="topic-name">Midpoint / Bresenham's Circle Drawing</span>
+                                <span class="tier-badge tier-high-prob">HIGH PROB (3/4)</span>
+                            </div>
+                            <span class="chevron">↓</span>
+                        </div>
+                        <div class="accordion-body">
+                            <div class="accordion-content-inner">
+                                <div class="metadata-row">
+                                    <span class="chip">Part B</span>
+                                    <span class="chip">Even Slot (Q12)</span>
+                                </div>
+                                <div class="prep-block">
+                                    <p><strong>Prep Note:</strong> Mostly asked to generate coordinates for the first octant. Make sure you know how to derive the initial decision parameter.</p>
+                                </div>
+                                <div class="action-cards">
+                                    <div class="action-card card-practice">
+                                        <h5>Practice Problem</h5>
+                                        Plot circle center (0,0), radius=10 [Jan '24]. Center (6,5) radius=8 [Jun '22]. Center (5,3) radius=5 [May '23].
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODULE 2 -->
+            <section id="mod2" class="module-section">
+                <div class="module-header">
+                    <h2>Module 2 <span class="module-badge">2D/3D Transformations</span></h2>
+                </div>
+                
+                <div class="strategy-box">
+                    <h4>❖ Strategy for Mod 2</h4>
+                    <p><strong>Golden Overlap:</strong> 2D Composite Transformation problems appear on BOTH sides consistently. Mathematical proofs for additive/multiplicative properties appear prominently on the Even side. Polygon filling (Boundary/Scan-line) spans both.<br>
+                    <strong>Recommendation:</strong> Do NOT skip Polygon Filling algorithms. If you are good at Matrix Multiplications, you can score easily here.</p>
+                </div>
+
+                <div class="accordion-list">
+                    <!-- Topic -->
+                    <div class="accordion" data-id="m2-t1" style="animation-delay: 0ms;">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <div class="accordion-title-group">
+                                <div class="custom-checkbox" onclick="toggleCheck(event, this)">
+                                    <input type="checkbox">
+                                    <svg viewBox="0 0 16 16"><path d="M3 8.5 l3 3 l7 -7"/></svg>
+                                </div>
+                                <span class="topic-name">2D Composite Transformations (Problems)</span>
+                                <span class="tier-badge tier-sure-shot">SURE SHOT (4/4)</span>
+                            </div>
+                            <span class="chevron">↓</span>
+                        </div>
+                        <div class="accordion-body">
+                            <div class="accordion-content-inner">
+                                <div class="metadata-row">
+                                    <span class="chip">Part B (14m)</span>
+                                    <span class="chip">Golden Overlap</span>
+                                </div>
+                                <div class="prep-block">
+                                    <p><strong>Prep Note:</strong> These problems usually involve applying multiple transforms (Translate, Scale, Rotate) sequentially to a set of points (Line or Triangle). Use Homogeneous coordinates (3x3 matrices).</p>
+                                </div>
+                                <div class="action-cards">
+                                    <div class="action-card card-memorise">
+                                        <h5>Key Matrices</h5>
+                                        Translation: [1 0 tx; 0 1 ty; 0 0 1]. Rotation: [cos -sin 0; sin cos 0; 0 0 1]. Scaling: [sx 0 0; 0 sy 0; 0 0 1].
+                                    </div>
+                                    <div class="action-card card-practice">
+                                        <h5>⚠️ Typical Flow</h5>
+                                        Translate to origin -> Rotate/Scale -> Translate back. E.g. Rotate square by 45deg about its vertex (2,6) [May '23].
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Topic -->
+                    <div class="accordion" data-id="m2-t2" style="animation-delay: 60ms;">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <div class="accordion-title-group">
+                                <div class="custom-checkbox" onclick="toggleCheck(event, this)">
+                                    <input type="checkbox">
+                                    <svg viewBox="0 0 16 16"><path d="M3 8.5 l3 3 l7 -7"/></svg>
+                                </div>
+                                <span class="topic-name">Polygon Filling (Scan-Line & Boundary Fill)</span>
+                                <span class="tier-badge tier-sure-shot">SURE SHOT (4/4)</span>
+                            </div>
+                            <span class="chevron">↓</span>
+                        </div>
+                        <div class="accordion-body">
+                            <div class="accordion-content-inner">
+                                <div class="metadata-row">
+                                    <span class="chip">Part B Theory</span>
+                                    <span class="chip">Odd Slot Bias</span>
+                                </div>
+                                <div class="prep-block">
+                                    <p><strong>Prep Note:</strong> Boundary Fill is asked with 4-connected vs 8-connected comparison. Scan-Line filling requires you to explain data structures used (Edge Table, Active Edge Table).</p>
+                                </div>
+                                <div class="action-cards">
+                                    <div class="action-card card-memorise">
+                                        <h5>Definitions</h5>
+                                        Boundary Fill vs Flood Fill differences. 4-connected vs 8-connected pixel handling. Non-zero winding number rule.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Topic -->
+                    <div class="accordion" data-id="m2-t3" style="animation-delay: 120ms;">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <div class="accordion-title-group">
+                                <div class="custom-checkbox" onclick="toggleCheck(event, this)">
+                                    <input type="checkbox">
+                                    <svg viewBox="0 0 16 16"><path d="M3 8.5 l3 3 l7 -7"/></svg>
+                                </div>
+                                <span class="topic-name">Proofs: Additive/Multiplicative Properties</span>
+                                <span class="tier-badge tier-high-prob">HIGH PROB (3/4)</span>
+                            </div>
+                            <span class="chevron">↓</span>
+                        </div>
+                        <div class="accordion-body">
+                            <div class="accordion-content-inner">
+                                <div class="metadata-row">
+                                    <span class="chip">Part B (7m)</span>
+                                    <span class="chip">Even Slot (Q14)</span>
+                                </div>
+                                <div class="prep-block">
+                                    <p><strong>Prep Note:</strong> You must mathematically prove that two successive rotations are additive: R(θ1) * R(θ2) = R(θ1 + θ2). Same for scaling being multiplicative and translations being additive.</p>
+                                </div>
+                                <div class="action-cards">
+                                    <div class="action-card card-practice">
+                                        <h5>How to execute</h5>
+                                        Write the 3x3 matrices. Perform matrix multiplication. Use trig identities: cos(a+b) = cos(a)cos(b) - sin(a)sin(b) to simplify the rotation matrix proof.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Topic -->
+                    <div class="accordion" data-id="m2-t4" style="animation-delay: 180ms;">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <div class="accordion-title-group">
+                                <div class="custom-checkbox" onclick="toggleCheck(event, this)">
+                                    <input type="checkbox">
+                                    <svg viewBox="0 0 16 16"><path d="M3 8.5 l3 3 l7 -7"/></svg>
+                                </div>
+                                <span class="topic-name">Window to Viewport Transformation</span>
+                                <span class="tier-badge tier-high-prob">HIGH PROB (3/4)</span>
+                            </div>
+                            <span class="chevron">↓</span>
+                        </div>
+                        <div class="accordion-body">
+                            <div class="accordion-content-inner">
+                                <div class="metadata-row">
+                                    <span class="chip">Part A (3m)</span>
+                                </div>
+                                <div class="prep-block">
+                                    <p><strong>Prep Note:</strong> Extremely common 3-mark question. Simply write the equations relating (xw, yw) to (xv, yv) involving scaling factors Sx and Sy.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Topic -->
+                    <div class="accordion" data-id="m2-t5" style="animation-delay: 240ms;">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <div class="accordion-title-group">
+                                <div class="custom-checkbox" onclick="toggleCheck(event, this)">
+                                    <input type="checkbox">
+                                    <svg viewBox="0 0 16 16"><path d="M3 8.5 l3 3 l7 -7"/></svg>
+                                </div>
+                                <span class="topic-name">3D Transformations & Projections Base</span>
+                                <span class="tier-badge tier-moderate">MODERATE (2/4)</span>
+                            </div>
+                            <span class="chevron">↓</span>
+                        </div>
+                        <div class="accordion-body">
+                            <div class="accordion-content-inner">
+                                <div class="metadata-row">
+                                    <span class="chip">Part B Theory</span>
+                                </div>
+                                <div class="prep-block">
+                                    <p><strong>Prep Note:</strong> Explain basic 3D transformations using 4x4 homogeneous matrices. Also 3D reflection on planes (xy, yz, xz).</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODULE 3 -->
+            <section id="mod3" class="module-section">
+                <div class="module-header">
+                    <h2>Module 3 <span class="module-badge">Clipping & Surfaces</span></h2>
+                </div>
+                
+                <div class="strategy-box">
+                    <h4>❖ Strategy for Mod 3</h4>
+                    <p><strong>The "Big Four":</strong> This module consists almost entirely of 4 algorithms: Sutherland-Hodgeman Polygon Clipping, Cohen-Sutherland Line Clipping, Depth Buffer, and Scan-Line Surface Detection.<br>
+                    <strong>Recommendation:</strong> They are scattered evenly across Odd and Even slots. Master all four algorithms. Expect a numerical/intersection calculation for Cohen-Sutherland.</p>
+                </div>
+
+                <div class="accordion-list">
+                    <!-- Topic -->
+                    <div class="accordion" data-id="m3-t1" style="animation-delay: 0ms;">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <div class="accordion-title-group">
+                                <div class="custom-checkbox" onclick="toggleCheck(event, this)">
+                                    <input type="checkbox">
+                                    <svg viewBox="0 0 16 16"><path d="M3 8.5 l3 3 l7 -7"/></svg>
+                                </div>
+                                <span class="topic-name">Cohen-Sutherland Line Clipping</span>
+                                <span class="tier-badge tier-sure-shot">SURE SHOT (4/4)</span>
+                            </div>
+                            <span class="chevron">↓</span>
+                        </div>
+                        <div class="accordion-body">
+                            <div class="accordion-content-inner">
+                                <div class="metadata-row">
+                                    <span class="chip">Part B (Problem & Theory)</span>
+                                    <span class="chip">Part A</span>
+                                </div>
+                                <div class="prep-block">
+                                    <p><strong>Prep Note:</strong> Learn the 4-bit region code logic (TBRL - Top Bottom Right Left). Must know the intersection formulas: y = y1 + m(x - x1) and x = x1 + (1/m)(y - y1).</p>
+                                </div>
+                                <div class="action-cards">
+                                    <div class="action-card card-practice">
+                                        <h5>Practice Calculation</h5>
+                                        Window: (2,2) to (8,6). Line: P1(1,5) to P2(7,8) [Apr '25]. Find if line is inside/outside/partial, compute clipped coords.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Topic -->
+                    <div class="accordion" data-id="m3-t2" style="animation-delay: 60ms;">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <div class="accordion-title-group">
+                                <div class="custom-checkbox" onclick="toggleCheck(event, this)">
+                                    <input type="checkbox">
+                                    <svg viewBox="0 0 16 16"><path d="M3 8.5 l3 3 l7 -7"/></svg>
+                                </div>
+                                <span class="topic-name">Sutherland-Hodgeman Polygon Clipping</span>
+                                <span class="tier-badge tier-sure-shot">SURE SHOT (4/4)</span>
+                            </div>
+                            <span class="chevron">↓</span>
+                        </div>
+                        <div class="accordion-body">
+                            <div class="accordion-content-inner">
+                                <div class="metadata-row">
+                                    <span class="chip">Part B (8m)</span>
+                                </div>
+                                <div class="prep-block">
+                                    <p><strong>Prep Note:</strong> Explain the 4 cases (Inside-Inside, Inside-Outside, Outside-Outside, Outside-Inside) mapping vertices against clip boundaries (Left, Right, Bottom, Top). Provide a visual example tracing a polygon.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Topic -->
+                    <div class="accordion" data-id="m3-t3" style="animation-delay: 120ms;">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <div class="accordion-title-group">
+                                <div class="custom-checkbox" onclick="toggleCheck(event, this)">
+                                    <input type="checkbox">
+                                    <svg viewBox="0 0 16 16"><path d="M3 8.5 l3 3 l7 -7"/></svg>
+                                </div>
+                                <span class="topic-name">Visible Surface: Depth Buffer / Scan Line</span>
+                                <span class="tier-badge tier-sure-shot">SURE SHOT (4/4)</span>
+                            </div>
+                            <span class="chevron">↓</span>
+                        </div>
+                        <div class="accordion-body">
+                            <div class="accordion-content-inner">
+                                <div class="metadata-row">
+                                    <span class="chip">Part B Theory (8m)</span>
+                                </div>
+                                <div class="prep-block">
+                                    <p><strong>Prep Note:</strong> Depth Buffer (Z-Buffer) stores depth and intensity for each pixel (x,y). Scan-Line method needs Edge Table and Polygon Table. Both are frequently requested for 8 marks.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Topic -->
+                    <div class="accordion" data-id="m3-t4" style="animation-delay: 180ms;">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <div class="accordion-title-group">
+                                <div class="custom-checkbox" onclick="toggleCheck(event, this)">
+                                    <input type="checkbox">
+                                    <svg viewBox="0 0 16 16"><path d="M3 8.5 l3 3 l7 -7"/></svg>
+                                </div>
+                                <span class="topic-name">Projections Taxonomy (Parallel vs Perspective)</span>
+                                <span class="tier-badge tier-high-prob">HIGH PROB (3/4)</span>
+                            </div>
+                            <span class="chevron">↓</span>
+                        </div>
+                        <div class="accordion-body">
+                            <div class="accordion-content-inner">
+                                <div class="metadata-row">
+                                    <span class="chip">Part A</span>
+                                    <span class="chip">Part B Theory</span>
+                                </div>
+                                <div class="prep-block">
+                                    <p><strong>Prep Note:</strong> Draw the taxonomy tree. Differentiate Parallel vs Perspective. Define Principal Vanishing Point.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODULE 4 -->
+            <section id="mod4" class="module-section">
+                <div class="module-header">
+                    <h2>Module 4 <span class="module-badge">Image Processing Intro</span></h2>
+                </div>
+                
+                <div class="strategy-box">
+                    <h4>❖ Strategy for Mod 4</h4>
+                    <p><strong>Even Slot Bias (Q18):</strong> The Even path is heavily dominated by 'Shortest Path' (4, 8, m-path) adjacency problems. This is an easy scoring matrix problem.<br>
+                    <strong>Odd Slot Bias (Q17):</strong> Focuses more on Theory block diagrams (Fundamental steps in DIP, Components of IP System).<br>
+                    <strong>Recommendation:</strong> Do the Adjacency shortest path problems. The exact same grid appeared in Jan 2024 and May 2023.</p>
+                </div>
+
+                <div class="accordion-list">
+                    <!-- Topic -->
+                    <div class="accordion" data-id="m4-t1" style="animation-delay: 0ms;">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <div class="accordion-title-group">
+                                <div class="custom-checkbox" onclick="toggleCheck(event, this)">
+                                    <input type="checkbox">
+                                    <svg viewBox="0 0 16 16"><path d="M3 8.5 l3 3 l7 -7"/></svg>
+                                </div>
+                                <span class="topic-name">Pixel Adjacency & Shortest Path Calculation</span>
+                                <span class="tier-badge tier-sure-shot">SURE SHOT (4/4)</span>
+                            </div>
+                            <span class="chevron">↓</span>
+                        </div>
+                        <div class="accordion-body">
+                            <div class="accordion-content-inner">
+                                <div class="metadata-row">
+                                    <span class="chip">Part B (Problem)</span>
+                                    <span class="chip">Even Slot (Q18)</span>
+                                </div>
+                                <div class="prep-block">
+                                    <p><strong>Prep Note:</strong> Given a V set (e.g. V={0,1} or V={1,2}) and a matrix of pixels, find length of shortest 4-path, 8-path, and m-path between pixel p and q. If it doesn't exist, justify.</p>
+                                </div>
+                                <div class="action-cards">
+                                    <div class="action-card card-practice">
+                                        <h5>⚠️ EXACT REPEAT FLAG</h5>
+                                        The exact same grid from Jan '24 and May '23: <br>
+                                        [3 1 2 1 (q)] <br> [2 2 0 2] <br> [1 2 1 1] <br> [(p) 1 0 1 2] <br> Master this exact example!
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Topic -->
+                    <div class="accordion" data-id="m4-t2" style="animation-delay: 60ms;">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <div class="accordion-title-group">
+                                <div class="custom-checkbox" onclick="toggleCheck(event, this)">
+                                    <input type="checkbox">
+                                    <svg viewBox="0 0 16 16"><path d="M3 8.5 l3 3 l7 -7"/></svg>
+                                </div>
+                                <span class="topic-name">Steps in Digital Image Processing</span>
+                                <span class="tier-badge tier-sure-shot">SURE SHOT (4/4)</span>
+                            </div>
+                            <span class="chevron">↓</span>
+                        </div>
+                        <div class="accordion-body">
+                            <div class="accordion-content-inner">
+                                <div class="metadata-row">
+                                    <span class="chip">Part B Theory (8m)</span>
+                                    <span class="chip">Diagram Required</span>
+                                </div>
+                                <div class="prep-block">
+                                    <p><strong>Prep Note:</strong> Draw the block diagram outlining the fundamental steps: Image Acquisition -> Enhancement -> Restoration -> Morphological Proc -> Segmentation -> Object Rec -> Representation.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Topic -->
+                    <div class="accordion" data-id="m4-t3" style="animation-delay: 120ms;">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <div class="accordion-title-group">
+                                <div class="custom-checkbox" onclick="toggleCheck(event, this)">
+                                    <input type="checkbox">
+                                    <svg viewBox="0 0 16 16"><path d="M3 8.5 l3 3 l7 -7"/></svg>
+                                </div>
+                                <span class="topic-name">Components of Image Processing System</span>
+                                <span class="tier-badge tier-high-prob">HIGH PROB (3/4)</span>
+                            </div>
+                            <span class="chevron">↓</span>
+                        </div>
+                        <div class="accordion-body">
+                            <div class="accordion-content-inner">
+                                <div class="metadata-row">
+                                    <span class="chip">Part B Theory (8m)</span>
+                                </div>
+                                <div class="prep-block">
+                                    <p><strong>Prep Note:</strong> Similar to DIP steps but hardware-focused: Image Sensors, Specialized Hardware, Computer, Mass Storage, Image Displays, Hardcopy, Network.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Topic -->
+                    <div class="accordion" data-id="m4-t4" style="animation-delay: 180ms;">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <div class="accordion-title-group">
+                                <div class="custom-checkbox" onclick="toggleCheck(event, this)">
+                                    <input type="checkbox">
+                                    <svg viewBox="0 0 16 16"><path d="M3 8.5 l3 3 l7 -7"/></svg>
+                                </div>
+                                <span class="topic-name">Spatial vs Gray Level Resolution</span>
+                                <span class="tier-badge tier-moderate">MODERATE (2/4)</span>
+                            </div>
+                            <span class="chevron">↓</span>
+                        </div>
+                        <div class="accordion-body">
+                            <div class="accordion-content-inner">
+                                <div class="metadata-row">
+                                    <span class="chip">Part A</span>
+                                    <span class="chip">Part B (6m)</span>
+                                </div>
+                                <div class="prep-block">
+                                    <p><strong>Prep Note:</strong> Define spatial resolution (dpi, line pairs) and gray-level resolution (bits per pixel, e.g., 8-bit = 256 levels). Provide examples.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- MODULE 5 -->
+            <section id="mod5" class="module-section">
+                <div class="module-header">
+                    <h2>Module 5 <span class="module-badge">Enhancement & Segmentation</span></h2>
+                </div>
+                
+                <div class="strategy-box">
+                    <h4>❖ Strategy for Mod 5</h4>
+                    <p><strong>Odd Slot (Q19):</strong> Focuses on Enhancement (Histogram Equalization Problems, Sharpening Spatial Filters, Intensity Transformations).<br>
+                    <strong>Even Slot (Q20):</strong> Focuses on Segmentation (Edge Detectors: Sobel/Prewitt, Region Splitting & Merging).<br>
+                    <strong>Recommendation:</strong> Do you prefer matrix math? Choose Odd to solve Histogram Equalization. Do you prefer drawing masks & theory? Choose Even for Segmentation algorithms.</p>
+                </div>
+
+                <div class="accordion-list">
+                    <!-- Topic -->
+                    <div class="accordion" data-id="m5-t1" style="animation-delay: 0ms;">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <div class="accordion-title-group">
+                                <div class="custom-checkbox" onclick="toggleCheck(event, this)">
+                                    <input type="checkbox">
+                                    <svg viewBox="0 0 16 16"><path d="M3 8.5 l3 3 l7 -7"/></svg>
+                                </div>
+                                <span class="topic-name">Histogram Equalization (Problem)</span>
+                                <span class="tier-badge tier-sure-shot">SURE SHOT (3/4)</span>
+                            </div>
+                            <span class="chevron">↓</span>
+                        </div>
+                        <div class="accordion-body">
+                            <div class="accordion-content-inner">
+                                <div class="metadata-row">
+                                    <span class="chip">Part B (6-8m)</span>
+                                    <span class="chip">Odd/Even Cross</span>
+                                </div>
+                                <div class="prep-block">
+                                    <p><strong>Prep Note:</strong> You are given a 3-bit image (0 to 7 levels) as a 4x4 matrix. You must create the table: Gray Level (rk), Count (nk), PDF p(rk), CDF, s_k = T(r_k) * (L-1), Round off.</p>
+                                </div>
+                                <div class="action-cards">
+                                    <div class="action-card card-practice">
+                                        <h5>Practice Layout</h5>
+                                        Don't forget to draw the 'Before' and 'After' bar graphs showing equalization! L-1 for 3-bit is 7.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Topic -->
+                    <div class="accordion" data-id="m5-t2" style="animation-delay: 60ms;">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <div class="accordion-title-group">
+                                <div class="custom-checkbox" onclick="toggleCheck(event, this)">
+                                    <input type="checkbox">
+                                    <svg viewBox="0 0 16 16"><path d="M3 8.5 l3 3 l7 -7"/></svg>
+                                </div>
+                                <span class="topic-name">Edge Detection (Sobel, Prewitt)</span>
+                                <span class="tier-badge tier-sure-shot">SURE SHOT (3/4)</span>
+                            </div>
+                            <span class="chevron">↓</span>
+                        </div>
+                        <div class="accordion-body">
+                            <div class="accordion-content-inner">
+                                <div class="metadata-row">
+                                    <span class="chip">Part B (8m)</span>
+                                    <span class="chip">Even Slot (Q20)</span>
+                                </div>
+                                <div class="prep-block">
+                                    <p><strong>Prep Note:</strong> Explain the masks. Mention that Sobel provides more weight to the center pixel, offering better noise suppression than Prewitt.</p>
+                                </div>
+                                <div class="action-cards">
+                                    <div class="action-card card-memorise">
+                                        <h5>Memorise Masks</h5>
+                                        Prewitt X: [-1 -1 -1; 0 0 0; 1 1 1]. Prewitt Y: [-1 0 1; -1 0 1; -1 0 1].<br>
+                                        Sobel X: [-1 -2 -1; 0 0 0; 1 2 1]. Sobel Y: [-1 0 1; -2 0 2; -1 0 1].
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Topic -->
+                    <div class="accordion" data-id="m5-t3" style="animation-delay: 120ms;">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <div class="accordion-title-group">
+                                <div class="custom-checkbox" onclick="toggleCheck(event, this)">
+                                    <input type="checkbox">
+                                    <svg viewBox="0 0 16 16"><path d="M3 8.5 l3 3 l7 -7"/></svg>
+                                </div>
+                                <span class="topic-name">Region-Based Segmentation</span>
+                                <span class="tier-badge tier-high-prob">HIGH PROB (3/4)</span>
+                            </div>
+                            <span class="chevron">↓</span>
+                        </div>
+                        <div class="accordion-body">
+                            <div class="accordion-content-inner">
+                                <div class="metadata-row">
+                                    <span class="chip">Part B Theory (6-8m)</span>
+                                    <span class="chip">Even Bias</span>
+                                </div>
+                                <div class="prep-block">
+                                    <p><strong>Prep Note:</strong> Differentiate Region Growing vs Region Splitting & Merging. Draw the quadtree representation for splitting!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Topic -->
+                    <div class="accordion" data-id="m5-t4" style="animation-delay: 180ms;">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <div class="accordion-title-group">
+                                <div class="custom-checkbox" onclick="toggleCheck(event, this)">
+                                    <input type="checkbox">
+                                    <svg viewBox="0 0 16 16"><path d="M3 8.5 l3 3 l7 -7"/></svg>
+                                </div>
+                                <span class="topic-name">Spatial Filtering (Sharpening/Laplacian)</span>
+                                <span class="tier-badge tier-high-prob">HIGH PROB (3/4)</span>
+                            </div>
+                            <span class="chevron">↓</span>
+                        </div>
+                        <div class="accordion-body">
+                            <div class="accordion-content-inner">
+                                <div class="metadata-row">
+                                    <span class="chip">Part B (8m)</span>
+                                    <span class="chip">Part A</span>
+                                </div>
+                                <div class="prep-block">
+                                    <p><strong>Prep Note:</strong> Discuss the difference between 1st order (Gradient) and 2nd order (Laplacian) derivatives for spatial differentiation.</p>
+                                </div>
+                                <div class="action-cards">
+                                    <div class="action-card card-memorise">
+                                        <h5>Memorise Mask</h5>
+                                        Standard Laplacian Mask: [0 1 0; 1 -4 1; 0 1 0]. It highlights fine details and enhances edges.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Topic -->
+                    <div class="accordion" data-id="m5-t5" style="animation-delay: 240ms;">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <div class="accordion-title-group">
+                                <div class="custom-checkbox" onclick="toggleCheck(event, this)">
+                                    <input type="checkbox">
+                                    <svg viewBox="0 0 16 16"><path d="M3 8.5 l3 3 l7 -7"/></svg>
+                                </div>
+                                <span class="topic-name">Basic Intensity Transformations</span>
+                                <span class="tier-badge tier-moderate">MODERATE (2/4)</span>
+                            </div>
+                            <span class="chevron">↓</span>
+                        </div>
+                        <div class="accordion-body">
+                            <div class="accordion-content-inner">
+                                <div class="metadata-row">
+                                    <span class="chip">Part B</span>
+                                    <span class="chip">Part A</span>
+                                </div>
+                                <div class="prep-block">
+                                    <p><strong>Prep Note:</strong> Image Negatives (s = L - 1 - r). Power Law/Gamma Transformation (s = c * r^gamma). Contrast Stretching.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Mobile Nav -->
+    <nav class="mobile-nav" id="mobileNav">
+        <a href="#mod1" class="mobile-nav-item active">M1</a>
+        <a href="#mod2" class="mobile-nav-item">M2</a>
+        <a href="#mod3" class="mobile-nav-item">M3</a>
+        <a href="#mod4" class="mobile-nav-item">M4</a>
+        <a href="#mod5" class="mobile-nav-item">M5</a>
+    </nav>
+</div>
+
+<script>
+    const SCHEMES = [
+        { name: "Manuscript", "--bg": "#F6F1E7", "--bg-dark": "#EDE8DB", "--bg-card": "#FFFDF7", "--bg-card-open": "#FAFDF9", "--accent": "#6B8F6E", "--accent-light": "#EEF4EE", "--accent-mid": "#C5D5C6", "--accent-muted": "#B5A882", "--text": "#2C3139", "--text-light": "#404854", "--muted": "#7A7060", "--border": "#E2DAC8", "--border-strong": "#CFC6B2", "--or-bg": "#FFFBF2", "--memorise-bg": "#F7F2E8", "--memorise-border": "#E0D5C0", "--practice-bg": "#EEF4EE", "--practice-border": "#C5D5C6", "--prep-bg": "#F0F4F0", "--prep-border": "#D4E0D5", "--chip-bg": "#EDE8DB" },
+        { name: "Blueprint", "--bg": "#EEF1F7", "--bg-dark": "#E3E8F2", "--bg-card": "#F8F9FC", "--bg-card-open": "#F4F7FC", "--accent": "#4A6FA5", "--accent-light": "#E8EEF7", "--accent-mid": "#B8CCE4", "--accent-muted": "#8BA3C7", "--text": "#1E2A3A", "--text-light": "#2E3D52", "--muted": "#607090", "--border": "#D0D9E8", "--border-strong": "#B8C8DC", "--or-bg": "#F5F8FF", "--memorise-bg": "#EAF0F8", "--memorise-border": "#C8D8EC", "--practice-bg": "#E8EEF7", "--practice-border": "#B8CCE4", "--prep-bg": "#EDF2F9", "--prep-border": "#C0D0E4", "--chip-bg": "#E0E8F4" },
+        { name: "Terracotta", "--bg": "#F5EDE8", "--bg-dark": "#EDE0D8", "--bg-card": "#FDF9F7", "--bg-card-open": "#FAF5F2", "--accent": "#A0522D", "--accent-light": "#F5EBE4", "--accent-mid": "#D4A899", "--accent-muted": "#C4957A", "--text": "#2C1810", "--text-light": "#3D2418", "--muted": "#7A5848", "--border": "#E8D0C4", "--border-strong": "#D4B8A8", "--or-bg": "#FDF8F5", "--memorise-bg": "#F5EBE4", "--memorise-border": "#DCC0B0", "--practice-bg": "#F8F0EC", "--practice-border": "#D4A898", "--prep-bg": "#F2EAE5", "--prep-border": "#D0B4A4", "--chip-bg": "#EDE0D8" },
+        { name: "Dusk", "--bg": "#F0EDF5", "--bg-dark": "#E6E1EF", "--bg-card": "#FAF9FC", "--bg-card-open": "#F6F3FB", "--accent": "#7B5EA7", "--accent-light": "#EEE8F5", "--accent-mid": "#C8B8E0", "--accent-muted": "#A890C8", "--text": "#1E1830", "--text-light": "#2E2444", "--muted": "#6E6080", "--border": "#DDD4EC", "--border-strong": "#C8BCDC", "--or-bg": "#F8F5FC", "--memorise-bg": "#EEE8F5", "--memorise-border": "#D0C0E8", "--practice-bg": "#EAE4F4", "--practice-border": "#C4B4DC", "--prep-bg": "#EDE8F5", "--prep-border": "#C8B8E0", "--chip-bg": "#E4DCF0" },
+        { name: "Charcoal & Gold", "--bg": "#F2EFE8", "--bg-dark": "#E8E3D8", "--bg-card": "#FDFCF8", "--bg-card-open": "#F8F5EE", "--accent": "#8B6914", "--accent-light": "#F5EDD4", "--accent-mid": "#D4B870", "--accent-muted": "#C4A050", "--text": "#1A1810", "--text-light": "#2A2618", "--muted": "#6A6050", "--border": "#E0D8C4", "--border-strong": "#CCC0A0", "--or-bg": "#FDFAF2", "--memorise-bg": "#F5EDD4", "--memorise-border": "#D8C888", "--practice-bg": "#F0EAD4", "--practice-border": "#CCB870", "--prep-bg": "#F2ECD8", "--prep-border": "#D0BC80", "--chip-bg": "#E8DEC4" },
+        { name: "Forest Night", "--bg": "#EAF0EC", "--bg-dark": "#DDE8E0", "--bg-card": "#F7FBF8", "--bg-card-open": "#F2F8F4", "--accent": "#2D6A4F", "--accent-light": "#E8F4EC", "--accent-mid": "#A8D4B8", "--accent-muted": "#74B090", "--text": "#0D1F18", "--text-light": "#1A2E24", "--muted": "#507060", "--border": "#C8DDD0", "--border-strong": "#A8C8B8", "--or-bg": "#F4FBF6", "--memorise-bg": "#E4F0E8", "--memorise-border": "#A8D0B8", "--practice-bg": "#DDF0E4", "--practice-border": "#90C8A8", "--prep-bg": "#E8F4EC", "--prep-border": "#A0CEB4", "--chip-bg": "#D8EDE0" }
+    ];
+
+    function applyScheme(scheme) {
+        const root = document.documentElement;
+        for (const [key, value] of Object.entries(scheme)) {
+            if (key !== 'name') {
+                root.style.setProperty(key, value);
+            }
+        }
+        document.getElementById('themeName').textContent = `Theme: ${scheme.name}`;
+    }
+
+    function randomizeTheme() {
+        const scheme = SCHEMES[Math.floor(Math.random() * SCHEMES.length)];
+        applyScheme(scheme);
+    }
+
+    // Initialize Checkboxes State
+    let checkedTopics = JSON.parse(localStorage.getItem('ktuChecked_cst304')) || {};
+
+    function toggleAccordion(header) {
+        const accordion = header.closest('.accordion');
+        accordion.classList.toggle('open');
+    }
+
+    function toggleCheck(event, checkboxContainer) {
+        event.stopPropagation(); // prevent accordion toggle
+        const accordion = checkboxContainer.closest('.accordion');
+        const id = accordion.getAttribute('data-id');
+        
+        checkboxContainer.classList.toggle('checked');
+        accordion.classList.toggle('checked');
+        
+        checkedTopics[id] = checkboxContainer.classList.contains('checked');
+        localStorage.setItem('ktuChecked_cst304', JSON.stringify(checkedTopics));
+        
+        updateProgress();
+    }
+
+    function updateProgress() {
+        [1, 2, 3, 4, 5].forEach(mod => {
+            const accordions = document.querySelectorAll(`[data-id^="m${mod}-"]`);
+            const checked = Array.from(accordions).filter(a => a.classList.contains('checked')).length;
+            const text = `${checked}/${accordions.length}`;
+            
+            document.getElementById(`prog-mod${mod}`).textContent = text;
+            
+            // Just sync logic, visually UI updates on its own
+        });
+    }
+
+    // Scroll Spy for Navigation Active State
+    function setupScrollSpy() {
+        const mainScroll = document.getElementById('mainScroll');
+        const sections = document.querySelectorAll('.module-section');
+        const desktopNavItems = document.querySelectorAll('#desktopNav .nav-item');
+        const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+
+        mainScroll.addEventListener('scroll', () => {
+            let current = '';
+            const scrollY = mainScroll.scrollTop;
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                if (scrollY >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            // Update Desktop Nav
+            desktopNavItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href').includes(current)) {
+                    item.classList.add('active');
+                }
+            });
+
+            // Update Mobile Nav
+            mobileNavItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href').includes(current)) {
+                    item.classList.add('active');
+                }
+            });
+        });
+        
+        // Window scroll for mobile body mode
+        window.addEventListener('scroll', () => {
+            if(window.innerWidth > 768) return;
+            let current = '';
+            const scrollY = window.scrollY;
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                if (scrollY >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            mobileNavItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href').includes(current)) {
+                    item.classList.add('active');
+                }
+            });
+        });
+    }
+
+    function init() {
+        randomizeTheme();
+        
+        // Restore checkbox states
+        const accordions = document.querySelectorAll('.accordion');
+        accordions.forEach(acc => {
+            const id = acc.getAttribute('data-id');
+            if (checkedTopics[id]) {
+                const cb = acc.querySelector('.custom-checkbox');
+                cb.classList.add('checked');
+                acc.classList.add('checked');
+            }
+        });
+        
+        updateProgress();
+        setupScrollSpy();
+    }
+
+    window.onload = init;
+</script>
+</body>
+</html>
