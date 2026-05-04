@@ -201,9 +201,6 @@
             cursor: pointer;
             color: var(--text);
             transition: all 0.2s var(--ease-out);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
         .module-btn:hover { background: var(--surface); }
         .module-btn.active {
@@ -316,7 +313,7 @@
             margin: 24px 0;
             background: var(--surface);
             border: 1px solid var(--border);
-            border-left-width: 1px; /* Overriding user BAN but following user SPEC later? Actually spec said left 3px. User ban says no side-stripes > 1px. I'll use full border + subtle tint to avoid "AI Slop" look. */
+            border-left-width: 1px;
             border-radius: 8px;
         }
         .callout-label {
